@@ -13,26 +13,27 @@
                         margin: 0 auto;
                 }
 
-                #index_main {
+                #left_bar {
                           position: absolute;
-                          top: 1%;
-                          right: 80%;
-                          left: 1%;
-                          height: 98%;
-                          width: 20%;
+                          height: 100%;
+                          width: auto;
                           border: 1px solid white;
-                          padding: 10px;
                           text-align: 50%; 
+                }
+
+                #righttext {
+                          text-align: center;
+                          color: white
                 }
 
         </style>
     </head>
     <body>
-            <div id="index_main" class="container-fluid bg-dark text-white">
+            <div id="left_bar" class="container-fluid bg-dark text-white">
                 <div id="index_intro">
                         <h1>This is the index page</h1>
                         <p>This will be the site description</p>
-                <div>
+                </div>
                 <div id="index_links">
                         <ul>
                             <li><a href="page1.html" style="color:white">Lists</a></li>
@@ -41,6 +42,9 @@
                             <li><a href="page4.html" style="color:white">Click here!</a></li>
                         </ul>
                 </div>
+            </div>
+            <div id="rightside">
+                 <h1 id="righttext">ADD CONTENT HERE</h1>
             </div>
      </body>
 </html>

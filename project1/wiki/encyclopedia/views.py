@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from markdown2 import Markdown
 from . import util
 
@@ -23,3 +25,32 @@ def get_wiki(request, title):
             "entry": markdowner.convert(entry),
             "title": title
         })
+
+
+def edit_entry():
+    return None
+
+
+def new_entry():
+    return None
+
+
+def search(request):
+    characters = request.GET.get("q", "")
+    if util.get_entry(characters) is not None:
+        return HttpResponseRedirect(reverse("entry", kwargs={"entry": characters}))
+    else:
+        substring = []
+        for entry in util.list_entries():
+            if characters.upper() in entry.upper():
+                substring.append(entry)
+
+        return render(request, "encyclopedia/index.html", {
+            "entries": substring,
+            "search": True,
+            "characters:": characters
+        })
+
+
+def random():
+    return None

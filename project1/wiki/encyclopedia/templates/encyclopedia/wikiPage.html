@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block body %}
-    <a class="btn btn-dark" href="/wiki/{{ title }}/edit" role="button">Edit</a>
+    <div style="margin-bottom: 20px">
+        <a class="btn btn-dark" href="/wiki/{{ title }}/edit" role="button">Edit</a>
+    </div>
     {{ entry|safe }}
 {% endblock %}

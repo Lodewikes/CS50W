@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "encyclopedia/layout.html" %}
 
-</body>
-</html>
+{% block title %}
+    {% if edit %}
+        Editing Page
+    {% else %}
+        Create Page
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if exist %}
+        <div class="alert alert-danger" role="alert">
+            <p>{{ entry }} already exists, view it <a href="wiki/{{ entry }}">here</a></p>
+            <p>or <a href="{% url 'new_entry' %}">Create Another Page</a></p>
+        </div>
+    {% elif not exist %}
+        <form action="{% url 'new_entry' %}" method="post">
+            {% csrf_token %}
+            <div>
+                <a>{{ form }}</a>
+            </div>
+            <input class="btn btn-dark" type="submit" value="Submit">
+        </form>
+    {% endif %}
+{% endblock %}

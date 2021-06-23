@@ -1,3 +1,53 @@
 body {
     padding: 10px;
 }
+
+#listing_active_details {
+    margin-top: 25px;
+}
+
+#listing-row {
+    margin-left: 25px;
+}
+
+#listing-img-col {
+    margin-left: 25px;
+    float: left;
+    width: 20%;
+    text-align: center;
+}
+
+#listing-details-col {
+    margin-left: 100px;
+}
+
+#listing-img {
+    width:100%;
+    height:100%;
+    object-fit: contain;
+}
+
+#listed-img {
+    width:100%;
+    height:100%;
+    object-fit: contain;
+}
+
+#listed-container {
+    margin-top: 50px
+}
+
+#listed-row {
+    margin-left: 25px;
+}
+
+#listed-img-col {
+    margin-left: 25px;
+    float: left;
+    width: 40%;
+    text-align: center;
+}
+
+#listed-details-col {
+    margin-left: 100px;
+}

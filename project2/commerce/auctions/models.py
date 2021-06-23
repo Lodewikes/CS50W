@@ -26,6 +26,9 @@ class Bid(models.Model):
     user = models.CharField(max_length=64)
     bid = models.FloatField()
 
+    def __str__(self):
+        return f"Bid: {self.user} bid {self.bid}"
+
 
 class Comment(models.Model):
     user = models.CharField(max_length=64)
@@ -33,10 +36,16 @@ class Comment(models.Model):
     listing_pk = models.IntegerField()
     time = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Comment: {self.user} commented at {self.time}"
+
 
 class WatchList(models.Model):
     user = models.CharField(max_length=64)
     listing_pk = models.IntegerField()
+
+    def __str__(self):
+        return f"Watchlist: {self.user} listing id {self.listing_pk}"
 
 
 class Sold(models.Model):

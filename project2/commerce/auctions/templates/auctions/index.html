@@ -1,7 +1,35 @@
 {% extends "auctions/layout.html" %}
-
+{% load tags %}
 {% block body %}
     <h2>Active Listings</h2>
-
-    TODO
+    <hr>
+    {% for listing in listings %}
+        <div id="listing-row" class="row">
+            <div id="listing-img-col" class="column">
+               {% if listing.image %}
+                  <img id="listing-img" src="{{ listing.image }}">
+               {% endif %}
+            </div>
+            <div id="listing-details-col" class="column">
+                <h5 id="listing-title"><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h5>
+                    <p>Seller: {{ listing.seller }}</p>
+                    <p>Description: {{ listing.description }}</p>
+                    <p>Starting bid: £{{ listing.start_bid }}</p>
+                    <p>Date posted: {{ listing.listing_date }}</p>
+                    {% get_watchlist_status user.username listing.id as watch_status %}
+                    {% if watch_status %}
+                        <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-dark" value="Remove From Watchlist">
+                        </form>
+                    {% else %}
+                        <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-dark" value="Add To Watchlist">
+                        </form>
+                    {% endif %}
+            </div>
+        </div>
+        <hr>
+    {% endfor %}
 {% endblock %}

@@ -3,12 +3,16 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django import template
 
-from .models import User
+from .models import *
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "listings": AuctionListing.objects.all(),
+    })
 
 
 def login_view(request):
@@ -64,13 +68,43 @@ def register(request):
 
 
 def closed_listings(request):
-    pass
+    return render(request, "auctions/closedListings.html")
 
 
 def categories(request):
-    pass
+    return render(request, "auctions/categories.html")
 
 
 def create_listing(request):
-    pass
+    return render(request, "auctions/createListing.html")
 
+
+def listing_view(request, listing_id):
+    return render(request, "auctions/Listing.html", {
+        "listing": AuctionListing.objects.get(pk=int(listing_id))
+    })
+
+
+@login_required(login_url="/login")
+def watchlist_view(request):
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": WatchList.objects.all().filter(user=request.user.username)
+    })
+
+
+@login_required(login_url="/login")
+def add_to_watchlist(request, listing_id):
+    item = WatchList.objects.filter(user=request.user.username, listing_pk=listing_id)
+
+    if item:
+        item.delete()
+        print("removed")
+        # return render(request, "auctions/index.html", {
+        #     "listings": AuctionListing.objects.all(),
+        # })
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    else:
+        new_item = WatchList(user=request.user.username, listing_pk=listing_id)
+        new_item.save()
+        print("added")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

@@ -80,8 +80,9 @@ def create_listing(request):
 
 
 def listing_view(request, listing_id):
-    return render(request, "auctions/Listing.html", {
-        "listing": AuctionListing.objects.get(pk=int(listing_id))
+    return render(request, "auctions/listing.html", {
+        "listing": AuctionListing.objects.get(pk=int(listing_id)),
+        "comments": Comment.objects.all().filter(listing_pk=int(listing_id))
     })
 
 

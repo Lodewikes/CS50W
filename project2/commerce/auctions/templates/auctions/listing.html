@@ -2,33 +2,61 @@
 {% load tags %}
 
 {% block body %}
-    <h2>{{ listing.title }}</h2>
-    {% get_watchlist_status user.username listing.id as watch_status %}
-    {% if watch_status %}
-        <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
-            {% csrf_token %}
-            <input type="submit" class="btn btn-dark" value="Remove From Watchlist">
-        </form>
-    {% else %}
-        <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
-            {% csrf_token %}
-            <input type="submit" class="btn btn-dark" value="Add To Watchlist">
-        </form>
-    {% endif %}
-    <div id="listed-container">
-        <div id="listed-row" class="row">
-            <div id="listed-img-col" class="column">
-                <img id="listed-img" src="{{ listing.image }}">
-            </div>
-            <div id="listed-details-col" class="column">
-                <ul>
-                    <p></p>
-                    <li>Seller: {{ listing.seller }}</li>
-                    <li>Description: {{ listing.description }}</li>
-                    <li>Starting bid: £{{ listing.start_bid }}</li>
-                    <li>Date posted: {{ listing.listing_date }}</li>
-                </ul>
-            </div>
+    <div id="listed-top-bar">
+        <h2>{{ listing.title }}</h2>
+        {% get_watchlist_status user.username listing.id as watch_status %}
+        {% if watch_status %}
+            <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark" value="Remove From Watchlist" style="font-size:13px">
+            </form>
+        {% else %}
+            <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-dark" value="Add To Watchlist" style="font-size:13px">
+            </form>
+        {% endif %}
+    </div>
+    <div id="listed-img-div" >
+        <img id="listed-img" src="{{ listing.image }}">
+    </div>
+    <hr>
+    <div id="listed-details-div" >
+        <div id="listed-details-div-inside">
+            <a id="listed-details-content">
+                <p>
+                    <b style="display:inline-block">Seller:</b> {{ listing.seller }}
+                </p>
+                <p><b>Starting bid:</b> £{{ listing.start_bid }}</p>
+                <p><b>Date posted:</b>  {{ listing.listing_date }}</p>
+                <p><b>Description:</b>  {{ listing.description }}</p>
+            </a>
+        </div>
+        <hr>
+    </div>
+    {% if user.is_authenticated %}
+    <div id="comment-section">
+        <h5>Comments:</h5>
+        <hr>
+        <div id="posted-comments">
+            {% if comments %}
+                {% for comment in comments %}
+                    <p>
+                        <a><b>{{ comment.user }}: </b></a>
+                        {% time_since_comment comment.time as time_since %}
+                        <a>{{ comment.comment }}</a>
+                    </p>
+                    <a style="font-size:11px">{{ time_since.1 }} {{ time_since.0 }} ago</a>
+                    <hr>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div id="comment-box-div">
+            <form id="comment-form" action="" class="form-group">
+                <textarea placeholder="Post a comment" rows="4" cols="25"></textarea><br />
+            </form>
         </div>
     </div>
+    {% endif %}
 {% endblock %}
+

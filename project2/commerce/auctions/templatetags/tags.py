@@ -64,9 +64,9 @@ def time_since_comment(timestamp):
 
 
 @register.simple_tag
-def get_highest_bid(id):
+def get_highest_bid(listing_id):
     # TODO consider more efficient algorithm
-    bids = Bid.objects.filter(listing_pk=int(id))
+    bids = Bid.objects.filter(listing_pk=int(listing_id))
     if bids:
         highest_bid = None
         for bid in bids:
@@ -75,3 +75,14 @@ def get_highest_bid(id):
         return highest_bid
     else:
         return 0.00
+
+
+@register.simple_tag
+def get_category(listing_id):
+    listing = AuctionListing.objects.get(id=int(listing_id))
+    if listing is not None:
+        category = listing.get_category_display()
+        return category
+    else:
+        return "Uncategorized"
+

@@ -76,7 +76,24 @@ def closed_listings(request):
 
 
 def categories(request):
-    return render(request, "auctions/categories.html")
+    categories_list = [
+        "Electronics",
+        "Fashion",
+        "Health & Beauty",
+        "Home & Garden",
+        "Sports",
+        "Collectables and Art",
+        "Industrial Equipment",
+        "Motors",
+        "Uncategorized",
+    ]
+    for category in categories_list:
+        # TODO
+        pass
+    return render(request, "auctions/categories.html", {
+        "categories_list": categories_list,
+        "listings": AuctionListing.objects.all(),
+    })
 
 
 def create_listing(request):

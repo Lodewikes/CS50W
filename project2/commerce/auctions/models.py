@@ -15,7 +15,20 @@ class AuctionListing(models.Model):
 
     # Optional fields
     image = models.CharField(max_length=2048, default=None, blank=True, null=True)
-    category = models.CharField(max_length=64, default="uncategorized", blank=True)
+
+    categories = [
+        ("EL", "Electronics"),
+        ("FA", "Fashion"),
+        ("HB", "Health & Beauty"),
+        ("HG", "Home & Garden"),
+        ("SP", "Sports"),
+        ("CA", "Collectables and Art"),
+        ("IE", "Industrial Equipment"),
+        ("MO", "Motors"),
+        ("UN", "Uncategorized"),
+    ]
+    category = models.CharField(max_length=64, default=categories[-1],
+                                blank=True, choices=categories)
 
     def __str__(self):
         return f"Listing: {self.title} by {self.seller}"

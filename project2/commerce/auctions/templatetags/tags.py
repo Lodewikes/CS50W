@@ -61,3 +61,17 @@ def time_since_comment(timestamp):
         obj.append("min")
         obj.append(minutes_trunc)
         return obj
+
+
+@register.simple_tag
+def get_highest_bid(id):
+    # TODO consider more efficient algorithm
+    bids = Bid.objects.filter(listing_pk=int(id))
+    if bids:
+        highest_bid = None
+        for bid in bids:
+            if highest_bid is None or bid.bid > highest_bid:
+                highest_bid = bid.bid
+        return highest_bid
+    else:
+        return 0.00

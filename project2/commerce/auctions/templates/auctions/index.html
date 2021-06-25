@@ -14,6 +14,8 @@
                 <h5 id="listing-title"><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h5>
                 <p><b>Seller:</b> {{ listing.seller }}</p>
                 <p><b>Starting bid:</b> £{{ listing.start_bid }}</p>
+                {% get_highest_bid listing.id as highest_bid %}
+                <p><b>Current bid:</b> £{{ highest_bid }}</p>
                 <p><b>Date posted:</b> {{ listing.listing_date }}</p>
                 <p><b>Description:</b> {{ listing.description }}</p>
                 {% get_watchlist_status user.username listing.id as watch_status %}

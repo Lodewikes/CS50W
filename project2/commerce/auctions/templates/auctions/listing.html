@@ -3,7 +3,9 @@
 
 {% block body %}
     <div id="listed-top-bar">
+        {% get_category listing.id as category %}
         <h2>{{ listing.title }}</h2>
+        <p style="font-size:12px">In {{ category }}</p>
         {% get_watchlist_status user.username listing.id as watch_status %}
         {% if watch_status %}
             <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">

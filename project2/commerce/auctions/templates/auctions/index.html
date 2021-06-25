@@ -17,6 +17,10 @@
                 {% get_highest_bid listing.id as highest_bid %}
                 <p><b>Current bid:</b> £{{ highest_bid }}</p>
                 <p><b>Date posted:</b> {{ listing.listing_date }}</p>
+                {% if listing.category %}
+                    {% get_category listing.id as category %}
+                    <p><b>Category:</b> {{ category }}</p>
+                {% endif %}
                 <p><b>Description:</b> {{ listing.description }}</p>
                 {% get_watchlist_status user.username listing.id as watch_status %}
                 {% if watch_status %}

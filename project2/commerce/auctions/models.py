@@ -12,6 +12,7 @@ class AuctionListing(models.Model):
     description = models.TextField()
     start_bid = models.FloatField()
     listing_date = models.DateTimeField(auto_now_add=True)
+    closed = models.BooleanField(default=False)
 
     # Optional fields
     image = models.CharField(max_length=2048, default=None, blank=True, null=True)

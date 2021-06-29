@@ -4,6 +4,8 @@ import datetime
 from datetime import timezone
 import math
 
+from ..models import *
+
 register = template.Library()
 
 
@@ -64,17 +66,16 @@ def time_since_comment(timestamp):
 
 
 @register.simple_tag
-def get_highest_bid(listing_id):
-    # TODO consider more efficient algorithm
+def get_highest_bidder(listing_id):
     bids = Bid.objects.filter(listing_pk=int(listing_id))
     if bids:
-        highest_bid = None
+        highest_bidding = bids[0]
         for bid in bids:
-            if highest_bid is None or bid.bid > highest_bid:
-                highest_bid = bid.bid
-        return highest_bid
+            if highest_bidding is None or bid.bid > highest_bidding.bid:
+                highest_bidding = bid.bid
+        return highest_bidding
     else:
-        return 0.00
+        return Bid(listing_pk=-1, user=None, bid=0)
 
 
 @register.simple_tag

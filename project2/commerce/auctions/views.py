@@ -11,6 +11,18 @@ from django import template
 
 from .models import *
 
+categories_list = [
+    "Electronics",
+    "Fashion",
+    "Health & Beauty",
+    "Home & Garden",
+    "Sports",
+    "Collectables and Art",
+    "Industrial Equipment",
+    "Motors",
+    "Uncategorized",
+]
+
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -71,22 +83,27 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
+@login_required(login_url="/login")
 def closed_listings(request):
-    return render(request, "auctions/closedListings.html")
+    return render(request, "auctions/closedListings.html", {
+        "listings": AuctionListing.objects.all(),
+        "bids": Bid.objects.all()
+    })
+
+
+@login_required(login_url="/login")
+def close_listing(request, listing_id):
+    listing = AuctionListing.objects.get(id=int(listing_id))
+    if listing and listing.seller == request.user.username:
+        listing.closed = True
+        listing.save()
+    return render(request, "auctions/closedListings.html", {
+        "listings": AuctionListing.objects.all(),
+        "bids": Bid.objects.all()
+    })
 
 
 def categories(request):
-    categories_list = [
-        "Electronics",
-        "Fashion",
-        "Health & Beauty",
-        "Home & Garden",
-        "Sports",
-        "Collectables and Art",
-        "Industrial Equipment",
-        "Motors",
-        "Uncategorized",
-    ]
     for category in categories_list:
         # TODO
         pass
@@ -96,10 +113,47 @@ def categories(request):
     })
 
 
+def single_category_view(request, category):
+    categories_item = [category]
+    return render(request, "auctions/categories.html", {
+        "categories_list": categories_item,
+        "listings": AuctionListing.objects.all()
+    })
+    pass
+
+
+@login_required(login_url="/login")
 def create_listing(request):
-    return render(request, "auctions/createListing.html")
+    if request.method == "POST":
+        title = request.POST["title"]
+        start_bid = request.POST["starting_bid"]
+        image = request.POST["image_url"]
+        description = request.POST["text"]
+        category = request.POST["category_dropdown"]
+
+        categries = AuctionListing().categories
+        i = 0
+        for i in range(len(categries)):
+            print(category)
+            if category == categries[i][1]:
+                print(categries[i][1])
+                listing = AuctionListing(title=title, description=description,
+                                         start_bid=start_bid, image=image, category=categries[i][1],
+                                         seller=request.user.username, listing_date=datetime.datetime.now(timezone.utc))
+                if request.user.username is not None:
+                    listing.save()
+                return render(request, "auctions/index.html", {
+                    "listings": AuctionListing.objects.all(),
+                    "bids": Bid.objects.all()
+                })
+            i += 1
+    else:
+        return render(request, "auctions/createListing.html", {
+            "categories": categories_list
+        })
 
 
+@login_required(login_url="/login")
 def listing_view(request, listing_id):
     return render(request, "auctions/listing.html", {
         "listing": AuctionListing.objects.get(pk=int(listing_id)),
@@ -120,11 +174,17 @@ def add_to_watchlist(request, listing_id):
 
     if item:
         item.delete()
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        return render(request, "auctions/index.html", {
+            "listings": AuctionListing.objects.all(),
+            "bids": Bid.objects.all()
+        })
     else:
         new_item = WatchList(user=request.user.username, listing_pk=listing_id)
         new_item.save()
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        return render(request, "auctions/index.html", {
+            "listings": AuctionListing.objects.all(),
+            "bids": Bid.objects.all()
+        })
 
 
 @login_required(login_url="/login")
@@ -141,6 +201,7 @@ def post_comment(request, listing_id):
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
+@login_required(login_url="/login")
 def bid(request, listing_id):
     if request.method == "POST":
         bids = Bid.objects.filter(listing_pk=listing_id)
@@ -153,7 +214,8 @@ def bid(request, listing_id):
             highest_bid = 0.00
 
         bid = Bid(listing_pk=int(listing_id), user=request.user.username, bid=request.POST.get("bid", False))
-        if request.user.username is not None and highest_bid is None and float(bid.bid) > float(AuctionListing.objects.get(id=int(listing_id)).start_bid):
+        if request.user.username is not None and highest_bid is None and float(bid.bid) > float(
+                AuctionListing.objects.get(id=int(listing_id)).start_bid):
             bid.save()
             return render(request, "auctions/listing.html", {
                 "listing": AuctionListing.objects.get(pk=int(listing_id)),

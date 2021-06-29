@@ -8,6 +8,7 @@
     {% endif %}
     {% for item in watchlist %}
     {% get_watchlist_item item.listing_pk as listing%}
+    {% if not listing.closed %}
         <div id="listing-row" class="row">
             <div id="listing-img-col" class="column">
                {% if listing.image %}
@@ -16,10 +17,16 @@
             </div>
             <div id="listing-details-col" class="column">
                 <h5 id="listing-title"><a href="{% url 'listing' listing.id %}">{{ listing.title }}</a></h5>
-                    <p>Seller: {{ listing.seller }}</p>
-                    <p>Description: {{ listing.description }}</p>
-                    <p>Starting bid: £{{ listing.start_bid }}</p>
-                    <p>Date posted: {{ listing.listing_date }}</p>
+                <p><b>Seller:</b> {{ listing.seller }}</p>
+                <p><b>Starting bid:</b> £{{ listing.start_bid }}</p>
+                {% get_highest_bidder listing.id as highest_bidder %}
+                <p><b>Current bid:</b> £{{ highest_bidder.bid }}</p>
+                <p><b>Date posted:</b> {{ listing.listing_date }}</p>
+                {% if listing.category %}
+                    {% get_category listing.id as category %}
+                    <p><b>Category:</b> {{ category }}</p>
+                {% endif %}
+                <p id="description-para"><b>Description:</b> {{ listing.description }}</p>
                     {% get_watchlist_status user.username listing.id as watch_status %}
                     {% if watch_status %}
                         <form action="{% url 'add_to_watchlist' listing.id %}" method="POST">
@@ -35,5 +42,6 @@
             </div>
         </div>
         <hr>
+    {% endif %}
     {% endfor %}
 {% endblock %}

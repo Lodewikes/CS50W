@@ -1,6 +1,36 @@
 {% extends "auctions/layout.html" %}
-
+{% load tags %}
 {% block body %}
-    <h2>Closed Listing</h2>
-    TODO
+    <h2>Closed Listings</h2>
+    <hr>
+    {% for listing in listings %}
+    {% get_highest_bidder listing.id as highest_bidder %}
+    {% if listing.closed %}
+        <div id="listing-row" class="row">
+            <div id="listing-img-col" class="column">
+               {% if listing.image %}
+                  <img id="listing-img" src="{{ listing.image }}">
+               {% endif %}
+            </div>
+            <div id="listing-details-col" class="column">
+                {% if highest_bidder.user is not None %}
+                    <h4><b>Sold to</b> {{ highest_bidder.user }} for £{{ highest_bidder.bid }}</h4>
+                {% else %}
+                    <h4><b>Closed without sale</b></h4>
+                {% endif %}
+                <h5>{{ listing.title }}</h5>
+                <p><b>Seller:</b> {{ listing.seller }}</p>
+                <p><b>Starting bid:</b> £{{ listing.start_bid }}</p>
+                <p><b>Highest bid:</b> £{{ highest_bidder.bid }}</p>
+                <p><b>Date posted:</b> {{ listing.listing_date }}</p>
+                {% if listing.category %}
+                    {% get_category listing.id as category %}
+                    <p><b>Category:</b> {{ category }}</p>
+                {% endif %}
+                <p id="description-para"><b>Description:</b> {{ listing.description }}</p>
+            </div>
+        </div>
+        <hr>
+    {%endif%}
+    {% endfor %}
 {% endblock %}

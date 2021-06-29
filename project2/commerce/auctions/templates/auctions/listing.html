@@ -30,17 +30,22 @@
                     <b style="display:inline-block">Seller:</b> {{ listing.seller }}
                 </p>
                 <p><b>Starting bid:</b> £{{ listing.start_bid }}</p>
-                {% get_highest_bid listing.id as highest_bid %}
-                <p><b>Current bid:</b> £{{ highest_bid }}</p>
+                {% get_highest_bidder listing.id as highest_bidder %}
+                <p><b>Current bid:</b> £{{ highest_bidder.bid }}</p>
                 <p><b>Date posted:</b>  {{ listing.listing_date }}</p>
-                <p><b>Description:</b>  {{ listing.description }}</p>
+                <p id="description-para"><b>Description:</b>  {{ listing.description }}</p>
             </a>
-            {% if user.is_authenticated %}
             <div id="bid-div">
+                {% if user.is_authenticated and listing.seller != user.username%}
                 <form id="bid-form" class="form-group" action="{% url 'bid' listing.id %}" method="post">
                     {% csrf_token %}
                     <input type="number" class="form-control" name="bid" placeholder="0" style="width:auto">
-                    <input type="submit" class="btn btn-dark" value="Bid" style="margin-top:10px">
+                        <input type="submit" class="btn btn-dark" value="Bid" style="margin-top:10px">
+                </form>
+                {% else %}
+                <form id="close_listing_form" class="form-group" action="{% url 'close_listing' listing.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-dark" value="Close" style="margin-top:10px">
                 </form>
             </div>
             {% endif %}
@@ -69,7 +74,7 @@
         </div>
         <div id="comment-box-div">
             <form id="comment-form" action="{% url 'post_comment' listing.id %}" class="form-group" method="post">
-                <textarea name="text" form="comment-form" class="form-control" placeholder="Post a comment" rows="4" cols="25"></textarea><br />
+                <textarea name="text" form="comment-form" class="form-control" placeholder="Post a comment" rows="4" cols="25"></textarea><br>
                 {% csrf_token %}
                 <input type="submit" class="btn btn-dark" value="comment">
             </form>

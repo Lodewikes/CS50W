@@ -1,6 +1,26 @@
 {% extends "auctions/layout.html" %}
+{% load tags %}
 
 {% block body %}
     <h2>Create Listing</h2>
-    TODO
+    <div id="create-form-div">
+        <form id="create-form" action="{% url 'create_listing' %}" method="post">
+            {% csrf_token %}
+            <label for="title">Title: </label><br>
+            <input autofocus id="title" class="form-control" type="text" name="title" placeholder="Title" autocomplete="off">
+            <label for="strt-bid">Starting bid: </label><br>
+            <input autofocus id="strt-bid" class="form-control" type="number" name="starting_bid" placeholder="Bid">
+            <label for="img-url">Image url: </label><br>
+            <input autofocus id="img-url" class="form-control" type="text" name="image_url" placeholder="Image url">
+            <label for="description">Description: </label><br>
+            <textarea id="description" name="text" form="create-form" class="form-control" placeholder="Description" rows="4"></textarea><br>
+            <label for="category">Category: </label><br>
+            <select class="browser-default custom-select" id="category" name="category_dropdown">
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+            <input class="btn btn-dark" type="submit" value="Create">
+        </form>
+    </div>
 {% endblock %}

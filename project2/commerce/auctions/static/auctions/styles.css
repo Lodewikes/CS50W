@@ -61,5 +61,10 @@ body {
     margin-left: 50px;
 }
 
-#comment-form {
+#create-form {
+    width: 40%;
+}
+
+#description-para {
+    white-space: pre-wrap;
 }

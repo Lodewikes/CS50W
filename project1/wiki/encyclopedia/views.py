@@ -9,8 +9,8 @@ from . import util
 
 
 class InputForm(forms.Form):
-    title = forms.CharField(max_length=200)
-    text_area = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 20}))
+    title = forms.CharField(max_length=200, widget=forms.TextInput(attrs={"id": "title-field"}))
+    text_area = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 20, "id": "text-field"}))
     edit = forms.BooleanField(initial=False, widget=forms.HiddenInput(), required=False)
 
 

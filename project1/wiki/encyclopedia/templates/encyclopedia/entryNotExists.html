@@ -7,5 +7,5 @@
 {% block body %}
     <h1>Entry Not Found for {{ title }}</h1>
     <h3>The page you are looking for seems to not exist</h3>
-    <h5>Would you like to create a page for it? Click here</h5>
+    <h5>Would you like to create a page for it? <a href="{% url 'new_entry' %}">Click here</a></h5>
 {% endblock %}

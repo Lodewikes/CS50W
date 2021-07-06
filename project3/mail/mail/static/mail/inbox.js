@@ -96,16 +96,11 @@ function displayEmails(email, row, mailbox) {
     recipients.innerHTML = email["recipients"].join(", ") + " ";
     rowItem.appendChild(recipients);
   }
-  else if (mailbox === "inbox") {
+  else if (mailbox === "inbox" || (mailbox === "archive")) {
     const sender = document.createElement("b");
     sender.innerHTML = email["sender"] + " ";
     rowItem.appendChild(sender);
   }
-  // else if (mailbox === "archived" && email["archived"]) {
-  //   const sender = document.createElement("b");
-  //   sender.innerHTML = email.sender + " ";
-  //   rowItem.appendChild(sender);
-  // }
   
   // Row styling
   rowItem.style.padding = "5px";
@@ -123,19 +118,28 @@ function displayEmails(email, row, mailbox) {
 }
 
 function openEmail(email, mailbox) {
-  // make sure page does not display old views
+  // make sure page does not display old views i.e clear page
   document.querySelector("#open-email-view").innerHTML = "";
   document.querySelector('#emails-view').innerHTML = "";
 
+  // create html elements for email display
   const sender = document.createElement("div");
   const subject = document.createElement("div");
   const body = document.createElement("div");
   const date = document.createElement("div");
+
+  // create html element for a line 
   const lineBreak = document.createElement("hr");
 
+  // create div containig buttons for buttons
+  const buttonContainer = document.createElement("div");
+  const unreadBtn = document.createElement("button");
+  const archiveBtn = document.createElement("button");
+
+  // inbox shows a sender and sentbox shows recipients
   if (mailbox === "inbox") {
     sender.innerHTML = "Sender: " + email.sender;
-    // TODO mark email as read. via PUT request
+    // opening an email marks it as read
     fetch(`/emails/${email.id}`, {
       method: "PUT",
       body: JSON.stringify({
@@ -144,15 +148,44 @@ function openEmail(email, mailbox) {
     });
   } else if (mailbox === "sent") {
     sender.innerHTML = "Recipients: " + email.recipients;
+  } else if (mailbox === "archive") {
+    sender.innerHTML = "Recipients: " + email.recipients;
+    // opening an email marks it as read
+    fetch(`/emails/${email.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        read: true,
+      })
+    });
   }
 
+  // set remaining content
   subject.innerHTML = "subject: " + email.subject;
   body.innerHTML = email.body;
   date.innerHTML = email.timestamp;
+
+  // style elements
   date.style.display = "inline-block"
   date.style.float = "right";
-  sender.appendChild(date);
+  if (email.read) {
+    var readState = "unread";
+  } else {
+    var readState = "read";
+  }
+  unreadBtn.appendChild(document.createTextNode(`mark ${readState}`));
+  unreadBtn.setAttribute("class", "btn btn-dark");
+  unreadBtn.style.marginBottom = "5px";
+  unreadBtn.style.marginRight = "10px";
+  // TODO style archiveBtn
+  // TODO set onclick listner for buttons
 
+  // append elements
+  sender.appendChild(date);
+  buttonContainer.appendChild(unreadBtn);
+  buttonContainer.appendChild(archiveBtn);
+
+  // append containing div
+  document.querySelector("#open-email-view").appendChild(buttonContainer);
   document.querySelector("#open-email-view").appendChild(sender);
   document.querySelector("#open-email-view").appendChild(lineBreak);
   document.querySelector("#open-email-view").appendChild(subject);

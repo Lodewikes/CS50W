@@ -27,7 +27,6 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
-// COMPLETE
 function sendEmail(event) {
   event.preventDefault();
   // retrieve fields from form
@@ -52,7 +51,9 @@ function sendEmail(event) {
 }
 
 function load_mailbox(mailbox) {
-  
+  // make sure page does not display old views
+  document.querySelector("#open-email-view").innerHTML = "";
+
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
@@ -71,6 +72,12 @@ function load_mailbox(mailbox) {
       displayEmails(email, row, mailbox);
       // call openEmail function when click on row
       row.addEventListener("click", () => openEmail(email, mailbox));
+      // white if read, grey if unread
+      if (!email.read && mailbox === "inbox") {
+        row.style.backgroundColor = "#d9d9d9";
+      } else {
+        row.style.backgroundColor = 'white';
+      }
       // add div to email-view
       document.querySelector("#emails-view").appendChild(row)
     })
@@ -78,9 +85,9 @@ function load_mailbox(mailbox) {
 }
 
 function displayEmails(email, row, mailbox) {
-
   const rowItem = document.createElement("div");
   const date = document.createElement("div");
+  const lineBreak = document.createElement("hr");
 
   // if sent, get recipients
   // if inbox, get sender
@@ -94,29 +101,32 @@ function displayEmails(email, row, mailbox) {
     sender.innerHTML = email["sender"] + " ";
     rowItem.appendChild(sender);
   }
-  else if (mailbox === "archived" && email["archived"]) {
-    const sender = document.createElement("b");
-    sender.innerHTML = email["sender"] + " ";
-    rowItem.appendChild(sender);
-  }
+  // else if (mailbox === "archived" && email["archived"]) {
+  //   const sender = document.createElement("b");
+  //   sender.innerHTML = email.sender + " ";
+  //   rowItem.appendChild(sender);
+  // }
   
   // Row styling
   rowItem.style.padding = "5px";
   rowItem.innerHTML += email["subject"];
 
-  // TODO verander
+  // Date styling
   date.innerHTML = email["timestamp"];
   date.style.display = "inline-block";
   date.style.float = "right";
   rowItem.appendChild(date)
-
   // append each row item to the final row div
   row.appendChild(rowItem);   
-
+  // row.style.backgroundColor = "#d9d9d9";
+  row.appendChild(lineBreak);
 }
 
 function openEmail(email, mailbox) {
+  // make sure page does not display old views
+  document.querySelector("#open-email-view").innerHTML = "";
   document.querySelector('#emails-view').innerHTML = "";
+
   const sender = document.createElement("div");
   const subject = document.createElement("div");
   const body = document.createElement("div");
@@ -125,8 +135,15 @@ function openEmail(email, mailbox) {
 
   if (mailbox === "inbox") {
     sender.innerHTML = "Sender: " + email.sender;
+    // TODO mark email as read. via PUT request
+    fetch(`/emails/${email.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        read: true,
+      })
+    });
   } else if (mailbox === "sent") {
-    sender.innerHTML = "Recipients" + email.recipients;
+    sender.innerHTML = "Recipients: " + email.recipients;
   }
 
   subject.innerHTML = "subject: " + email.subject;
@@ -135,11 +152,10 @@ function openEmail(email, mailbox) {
   date.style.display = "inline-block"
   date.style.float = "right";
   sender.appendChild(date);
-  
-  document.querySelector("#emails-view").appendChild(sender);
-  document.querySelector("#emails-view").appendChild(lineBreak);
-  document.querySelector("#emails-view").appendChild(subject);
-  document.querySelector("#emails-view").appendChild(lineBreak);
-  document.querySelector("#emails-view").appendChild(body);
-  return;
+
+  document.querySelector("#open-email-view").appendChild(sender);
+  document.querySelector("#open-email-view").appendChild(lineBreak);
+  document.querySelector("#open-email-view").appendChild(subject);
+  document.querySelector("#open-email-view").appendChild(lineBreak);
+  document.querySelector("#open-email-view").appendChild(body);
 }

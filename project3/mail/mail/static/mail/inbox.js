@@ -177,6 +177,15 @@ function openEmail(email, mailbox) {
   unreadBtn.style.marginBottom = "5px";
   unreadBtn.style.marginRight = "10px";
   // TODO style archiveBtn
+  if (email.archived) {
+    var archiveState = "unarchive";
+  } else {
+    var archiveState = "archive";
+  }
+  archiveBtn.appendChild(document.createTextNode(`${archiveState}`));
+  archiveBtn.setAttribute("class", "btn btn-dark");
+  archiveBtn.style.marginBottom = "5px";
+  archiveBtn.style.marginRight = "10px";
   // TODO set onclick listner for buttons
 
   // append elements

@@ -73,7 +73,7 @@ function load_mailbox(mailbox) {
       // call openEmail function when click on row
       row.addEventListener("click", () => openEmail(email, mailbox));
       // white if read, grey if unread
-      if (!email.read && mailbox === "inbox") {
+      if (!email.read && (mailbox === "inbox" || mailbox === "archive")) {
         row.style.backgroundColor = "#d9d9d9";
       } else {
         row.style.backgroundColor = 'white';
@@ -96,7 +96,7 @@ function displayEmails(email, row, mailbox) {
     recipients.innerHTML = email["recipients"].join(", ") + " ";
     rowItem.appendChild(recipients);
   }
-  else if (mailbox === "inbox" || (mailbox === "archive")) {
+  else if (mailbox === "inbox" || mailbox === "archive") {
     const sender = document.createElement("b");
     sender.innerHTML = email["sender"] + " ";
     rowItem.appendChild(sender);
@@ -167,31 +167,40 @@ function openEmail(email, mailbox) {
   // style elements
   date.style.display = "inline-block"
   date.style.float = "right";
+
+  // style unread button
   if (email.read) {
-    var readState = "unread";
+    unreadBtn.textContent = "unread";
   } else {
-    var readState = "read";
+    unreadBtn.textContent = "read";
   }
-  unreadBtn.appendChild(document.createTextNode(`mark ${readState}`));
   unreadBtn.setAttribute("class", "btn btn-dark");
+  unreadBtn.setAttribute("id", "unread-btn");
   unreadBtn.style.marginBottom = "5px";
   unreadBtn.style.marginRight = "10px";
+
   // TODO style archiveBtn
   if (email.archived) {
-    var archiveState = "unarchive";
+    archiveBtn.textContent = "unarchive";
   } else {
-    var archiveState = "archive";
+    archiveBtn.textContent = "archive";
   }
-  archiveBtn.appendChild(document.createTextNode(`${archiveState}`));
   archiveBtn.setAttribute("class", "btn btn-dark");
+  archiveBtn.setAttribute("id", "archive-btn");
   archiveBtn.style.marginBottom = "5px";
   archiveBtn.style.marginRight = "10px";
+
+
   // TODO set onclick listner for buttons
+  archiveBtn.addEventListener("click", () => archiveBtnHandler(email, archiveBtn));
+  unreadBtn.addEventListener("click", () => readBtnHandler(email, unreadBtn));
 
   // append elements
   sender.appendChild(date);
-  buttonContainer.appendChild(unreadBtn);
-  buttonContainer.appendChild(archiveBtn);
+  if (mailbox !== "sent") {
+    buttonContainer.appendChild(unreadBtn);
+    buttonContainer.appendChild(archiveBtn);
+  }
 
   // append containing div
   document.querySelector("#open-email-view").appendChild(buttonContainer);
@@ -200,4 +209,49 @@ function openEmail(email, mailbox) {
   document.querySelector("#open-email-view").appendChild(subject);
   document.querySelector("#open-email-view").appendChild(lineBreak);
   document.querySelector("#open-email-view").appendChild(body);
+}
+
+function archiveBtnHandler(email, btn) {
+  // TODO bug fix: only changes once. reload required to redo eventlistner
+  btn.textContent = "";
+  if(email.archived) {
+    fetch(`/emails/${email.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        archived: false,
+      })
+    });
+    btn.textContent = "archive";
+  } else {
+    fetch(`/emails/${email.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        archived: true,
+      })
+    });
+    btn.textContent = "unarchive";
+  }
+}
+
+function readBtnHandler(email, btn) {
+  // TODO bug fix: only changes once. reload required to redo eventlistner
+  btn.textContext = "";
+  if(email.read) {
+    fetch(`/emails/${email.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        read: false,
+      })
+    });
+    btn.textContent = "read";
+  } else {
+    btn.appendChild(document.createTextNode("mark read"));
+    fetch(`/emails/${email.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        read: true,
+      })
+    });
+    btn.textContent = "unread";
+  }
 }

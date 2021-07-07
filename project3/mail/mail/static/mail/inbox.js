@@ -4,21 +4,20 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', () => compose_email());
 
   // By default, load the inbox
   load_mailbox('inbox');
 
   // form event listner
-  document
-    .querySelector("#compose-form")
-    .addEventListener("submit", sendEmail);
+  document.querySelector("#compose-form").addEventListener("submit", sendEmail);
 });
 
 function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector("#open-email-view").style.display = "none";
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -70,8 +69,6 @@ function load_mailbox(mailbox) {
       const row = document.createElement("div");
       // call fuction to populate row with email
       displayEmails(email, row, mailbox);
-      // call openEmail function when click on row
-      row.addEventListener("click", () => openEmail(email, mailbox));
       // white if read, grey if unread
       if (!email.read && (mailbox === "inbox" || mailbox === "archive")) {
         row.style.backgroundColor = "#d9d9d9";
@@ -80,6 +77,8 @@ function load_mailbox(mailbox) {
       }
       // add div to email-view
       document.querySelector("#emails-view").appendChild(row)
+      // call openEmail function when click on row
+      row.addEventListener("click", () => openEmail(email, mailbox));
     })
   })
 }
@@ -135,6 +134,7 @@ function openEmail(email, mailbox) {
   const buttonContainer = document.createElement("div");
   const unreadBtn = document.createElement("button");
   const archiveBtn = document.createElement("button");
+	const replyBtn = document.createElement("button");
 
   // inbox shows a sender and sentbox shows recipients
   if (mailbox === "inbox") {
@@ -168,7 +168,6 @@ function openEmail(email, mailbox) {
   date.style.display = "inline-block"
   date.style.float = "right";
 
-  // style unread button
   if (email.read) {
     unreadBtn.textContent = "unread";
   } else {
@@ -179,7 +178,6 @@ function openEmail(email, mailbox) {
   unreadBtn.style.marginBottom = "5px";
   unreadBtn.style.marginRight = "10px";
 
-  // TODO style archiveBtn
   if (email.archived) {
     archiveBtn.textContent = "unarchive";
   } else {
@@ -190,16 +188,22 @@ function openEmail(email, mailbox) {
   archiveBtn.style.marginBottom = "5px";
   archiveBtn.style.marginRight = "10px";
 
+  replyBtn.setAttribute("class", "btn btn-dark");
+  replyBtn.textContent = "reply";
+  replyBtn.style.marginBottom = "5px";
+  replyBtn.style.marginRight = "10px";
 
-  // TODO set onclick listner for buttons
+  // set onclick listner for buttons
   archiveBtn.addEventListener("click", () => archiveBtnHandler(email, archiveBtn));
   unreadBtn.addEventListener("click", () => readBtnHandler(email, unreadBtn));
+  replyBtn.addEventListener("click", () => replyBtnHandler(email));
 
   // append elements
   sender.appendChild(date);
   if (mailbox !== "sent") {
     buttonContainer.appendChild(unreadBtn);
     buttonContainer.appendChild(archiveBtn);
+    buttonContainer.appendChild(replyBtn);
   }
 
   // append containing div
@@ -212,7 +216,7 @@ function openEmail(email, mailbox) {
 }
 
 function archiveBtnHandler(email, btn) {
-  // TODO bug fix: only changes once. reload required to redo eventlistner
+  // FIXME bug fix: only changes once. reload required to redo eventlistner
   btn.textContent = "";
   if(email.archived) {
     fetch(`/emails/${email.id}`, {
@@ -234,7 +238,7 @@ function archiveBtnHandler(email, btn) {
 }
 
 function readBtnHandler(email, btn) {
-  // TODO bug fix: only changes once. reload required to redo eventlistner
+  // FIXME bug fix: only changes once. reload required to redo eventlistner
   btn.textContext = "";
   if(email.read) {
     fetch(`/emails/${email.id}`, {
@@ -254,4 +258,18 @@ function readBtnHandler(email, btn) {
     });
     btn.textContent = "unread";
   }
+}
+
+// TODO reply
+function replyBtnHandler(email) {
+  // FIXME after reply opening email shows blank
+  // Show compose view and hide other views
+  document.querySelector("#emails-view").style.display = "none";
+  document.querySelector("#open-email-view").style.display = "none";
+  document.querySelector("#compose-view").style.display = "block";
+
+  // Clear out composition fields
+  document.querySelector("#compose-recipients").value = email.sender;
+  document.querySelector("#compose-subject").value = ((email.subject.match(/^(Re:)\s/)) ? email.subject : "Re: " + email.subject);
+  document.querySelector("#compose-body").value = `On ${email.timestamp} ${email.sender} wrote:\n${email.body}\n-------------------------------------\n`;
 }

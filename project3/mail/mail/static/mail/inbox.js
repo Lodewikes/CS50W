@@ -19,6 +19,7 @@ function compose_email() {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector("#open-email-view").style.display = "none";
   document.querySelector('#compose-view').style.display = 'block';
+  document.getElementById("#compose-body").style.whiteSpace = "pre-wrap";
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';

@@ -2,15 +2,52 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" href="./styles.css">
-        <title>Search</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <title>Advanced</title>
     </head>
     <body>
-        <form action="https://google.com/search">
-            <input type="text" name="q">
-            <input type="submit" value="Google Search">
-            <div id="links">
-                <a id="google-search" href="./index.html">Google Search</a>
-            </div>
-        </form>
+        <div id="links">
+            <a id="google-search" href="./index.html">Google Search</a></td>
+        </div>
+        <div class="adv-title-div">
+            <h4>Advanced Search</h4>
+            <hr>
+        </div>
+        <div id="adv-form-div">
+            <form id="adv-form" action="https://google.com/search">
+                <table class="text-input-table">
+                    <tr><td><h5>Find Pages with:</h5></td></tr>
+                    <tr>
+                        <td>all these words: </td>
+                        <td>
+                            <input id="adv-input" type="text" name="as_q">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>this exact word or phrase: </td>
+                        <td>
+                            <input id="adv-input" type="text" name="as_epq">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>any of these words: </td>
+                        <td>
+                            <input id="adv-input" type="text" name="as_oq">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>none of these words: </td>
+                        <td>
+                            <input id="adv-input" type="text" name="as_eq">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="submit" value="Google Search" class="btn btn-primary">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
     </body>
 </html>

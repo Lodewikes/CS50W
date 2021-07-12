@@ -203,6 +203,7 @@ def post_comment(request, listing_id):
 
 @login_required(login_url="/login")
 def bid(request, listing_id):
+    # FIXME stop accepting bids below starting bid
     if request.method == "POST":
         bids = Bid.objects.filter(listing_pk=listing_id)
         highest_bid = None
@@ -211,7 +212,7 @@ def bid(request, listing_id):
                 if highest_bid is None or bidding.bid > highest_bid:
                     highest_bid = bidding.bid
         else:
-            highest_bid = 0.00
+            highest_bid = None
 
         bid = Bid(listing_pk=int(listing_id), user=request.user.username, bid=request.POST.get("bid", False))
         if request.user.username is not None and highest_bid is None and float(bid.bid) > float(
@@ -221,7 +222,7 @@ def bid(request, listing_id):
                 "listing": AuctionListing.objects.get(pk=int(listing_id)),
                 "comments": Comment.objects.all().filter(listing_pk=int(listing_id)),
             })
-        elif request.user.username is not None and float(bid.bid) > highest_bid:
+        elif request.user.username is not None and highest_bid is not None and float(bid.bid) > float(highest_bid):
             bid.save()
             return render(request, "auctions/listing.html", {
                 "listing": AuctionListing.objects.get(pk=int(listing_id)),

@@ -71,8 +71,10 @@ def get_highest_bidder(listing_id):
     if bids:
         highest_bidding = bids[0]
         for bid in bids:
-            if highest_bidding is None or bid.bid > highest_bidding.bid:
-                highest_bidding = bid.bid
+            print(bid)
+            if highest_bidding is None or float(bid.bid) > highest_bidding.bid:
+                highest_bidding = bid
+        print(highest_bidding.bid)
         return highest_bidding
     else:
         return Bid(listing_pk=-1, user=None, bid=0)

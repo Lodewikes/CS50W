@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', () => compose_email());
+  document.querySelector('#compose').addEventListener('click', compose_email);
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -16,15 +16,17 @@ document.addEventListener('DOMContentLoaded', function() {
 function compose_email() {
 
   // Show compose view and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector("#open-email-view").style.display = "none";
+  document.querySelector('#emails-view').innerHTML = "";
+  document.querySelector("#open-email-view").innerHTML = "";
   document.querySelector('#compose-view').style.display = 'block';
-  document.getElementById('#compose-body').style.whiteSpace = "pre-wrap";
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+  
+  // styling
+  document.getElementById('#compose-body').style.whiteSpace = "pre-wrap";
 }
 
 function sendEmail(event) {
@@ -45,7 +47,7 @@ function sendEmail(event) {
   })
   .then(response => response.json())
   .then(result => {
-    load_mailbox("sent", result);
+    load_mailbox("sent");
   })
   .catch(error => console.log(`sendMailError: ${error}`));
 }
@@ -118,8 +120,8 @@ function displayEmails(email, row, mailbox) {
 }
 
 function openEmail(email, mailbox) {
-  // make sure page does not display old views i.e clear page
-  document.querySelector("#open-email-view").innerHTML = "";
+  // TODO make sure page does not display old views i.e clear page
+  // document.querySelector("#open-email-view").innerHTML = "";
   document.querySelector('#emails-view').innerHTML = "";
 
   // create html elements for email display
@@ -196,6 +198,7 @@ function openEmail(email, mailbox) {
 
   // set onclick listner for buttons
   archiveBtn.addEventListener("click", () => archiveBtnHandler(email, archiveBtn));
+  // archiveBtn.onclick = archiveBtnHandler(email, archiveBtn);
   unreadBtn.addEventListener("click", () => readBtnHandler(email, unreadBtn));
   replyBtn.addEventListener("click", () => replyBtnHandler(email));
 
@@ -217,7 +220,6 @@ function openEmail(email, mailbox) {
 }
 
 function archiveBtnHandler(email, btn) {
-  // FIXME bug fix: only changes once. reload required to redo eventlistner
   btn.textContent = "";
   if(email.archived) {
     fetch(`/emails/${email.id}`, {
@@ -239,7 +241,6 @@ function archiveBtnHandler(email, btn) {
 }
 
 function readBtnHandler(email, btn) {
-  // FIXME bug fix: only changes once. reload required to redo eventlistner
   btn.textContext = "";
   if(email.read) {
     fetch(`/emails/${email.id}`, {
@@ -261,12 +262,10 @@ function readBtnHandler(email, btn) {
   }
 }
 
-// TODO reply
 function replyBtnHandler(email) {
-  // FIXME after reply opening email shows blank
   // Show compose view and hide other views
-  document.querySelector("#emails-view").style.display = "none";
-  document.querySelector("#open-email-view").style.display = "none";
+  document.querySelector("#emails-view").innerHTML = "";
+  document.querySelector("#open-email-view").innerHTML = "";
   document.querySelector("#compose-view").style.display = "block";
 
   // Clear out composition fields

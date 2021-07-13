@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-
 class User(AbstractUser):
     pass
 
@@ -27,3 +26,4 @@ class Email(models.Model):
             "read": self.read,
             "archived": self.archived
         }
+

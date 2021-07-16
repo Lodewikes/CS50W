@@ -61,3 +61,43 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+def submit_post():
+    # TODO
+    pass
+
+
+def post_view():
+    # TODO
+    pass
+
+
+def submit_comment():
+    # TODO
+    pass
+
+
+def follow():
+    # TODO
+    pass
+
+
+def profile_view():
+    # TODO
+    pass
+
+
+def edit_post_view():
+    # TODO
+    pass
+
+
+def like():
+    # TODO
+    pass
+
+
+def paginate():
+    # TODO
+    pass

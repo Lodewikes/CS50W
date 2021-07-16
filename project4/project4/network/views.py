@@ -65,6 +65,13 @@ def register(request):
 
 def submit_post():
     # TODO
+    # if method is post
+    # get text and user from request
+    # create Post model object
+    # populate Post object with fields
+    # post.likes default = 0
+    # if user not none; save the object to database
+    # else don't allow post
     pass
 
 

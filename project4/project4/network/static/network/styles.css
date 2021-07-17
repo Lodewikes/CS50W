@@ -1,7 +1,16 @@
-#new-post {
+#authenticated {
     margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 25px;
+}
+
+#new-post-textarea {
+    width: 50%;
+    margin-bottom: 5px;
+    white-space: pre-wrap;
 }
 
 #not-authenticated {
-    margin-left: 25px
+    margin-left: 25px;
+    margin-margin: 25px;
 }

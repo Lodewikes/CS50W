@@ -1,10 +1,14 @@
+import datetime
+from datetime import timezone
+
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
-from .models import User
+from .models import User, Post
 
 
 def index(request):
@@ -63,16 +67,22 @@ def register(request):
         return render(request, "network/register.html")
 
 
-def submit_post():
+@login_required(login_url="/login")
+def submit_post(request):
     # TODO
-    # if method is post
-    # get text and user from request
-    # create Post model object
-    # populate Post object with fields
-    # post.likes default = 0
-    # if user not none; save the object to database
-    # else don't allow post
-    pass
+    if request.method == "POST":
+        body = request.POST.get("text", False)
+        post = Post(
+            poster=request.user.username,
+            timestamp=datetime.datetime.now(timezone.utc),
+            likes=0,
+            body=body
+        )
+        if request.user.username is not None:
+            post.save()
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            return HttpResponseRedirect(reverse("index"))
 
 
 def post_view():

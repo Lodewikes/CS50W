@@ -13,16 +13,21 @@
         </p>
     </div>
     {% else %}
-    <div id="new-post">
-        <form>
-            {% csrf_token %}
-            <div>
-                <textarea id="new-post-textarea"></textarea>
-            </div>
-            <div>
-                <input id="submit-post" class="btn btn-primary" type="submit" value="Post">
-            </div>
-        </form>
+    <div id="authenticated">
+        <div id="new-post">
+            <form id="new-post-form" class="form-group" action="{% url 'post' %}" method="post">
+                {% csrf_token %}
+                <div>
+                    <textarea id="new-post-textarea" name="text" class="form-control" placeholder="Create a post"></textarea>
+                </div>
+                <div>
+                    <input id="submit-post" class="btn btn-primary" type="submit" value="Post">
+                </div>
+            </form>
+        </div>
+        <div id="list-posts">
+            TODO
+        </div>
     </div>
     {% endif %}
 {% endblock %}

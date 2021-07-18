@@ -15,6 +15,9 @@ class Post(models.Model):
     def __str__(self):
         return f"Post by {self.poster}"
 
+    def is_likes_positive(self):
+        return self.likes >= 0
+
 
 # TODO determine necessity at later stage
 # class Follower(models.Model):

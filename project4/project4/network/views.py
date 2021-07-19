@@ -12,7 +12,9 @@ from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+    return render(request, "network/index.html", {
+        "posts": Post.objects.all()
+    })
 
 
 def login_view(request):
@@ -100,9 +102,18 @@ def follow():
     pass
 
 
-def profile_view():
+@login_required(login_url="/login")
+def profile_view(request, profile_name):
     # TODO
-    pass
+    profile = User.objects.get(username=profile_name)
+    posts = Post.objects.filter(poster=profile.username)
+    if profile.username is not None:
+        return render(request, "network/profile.html", {
+            "profile": profile,
+            "posts": posts
+        })
+    else:
+        return render(request, "network/index.html")
 
 
 def edit_post_view():

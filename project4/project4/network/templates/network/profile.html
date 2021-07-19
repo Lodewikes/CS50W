@@ -2,8 +2,17 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-        {{ profile }}
-        {{ posts }}
+        <div class="authenticated">
+            {% if user.username == profile.username %}
+                <p>{{ profile.username }}</p>
+                <p>{{ profile.email }}</p>
+                <p>{{ posts }}</p>
+            {% else %}
+                <p>{{ profile.username }}</p>
+                <p>{{ posts }}</p>
+                <button class="btn btn-dark">follow</button>
+            {% endif %}
+        </div>
     {% else %}
         not logged in
     {% endif %}

@@ -1,7 +1,12 @@
-#authenticated {
+.authenticated {
     margin-left: 25px;
     margin-right: 25px;
     margin-top: 25px;
+}
+
+.not-authenticated {
+    margin-left: 25px;
+    margin-margin: 25px;
 }
 
 #new-post-textarea {
@@ -10,7 +15,9 @@
     white-space: pre-wrap;
 }
 
-#not-authenticated {
-    margin-left: 25px;
-    margin-margin: 25px;
+#likes-display {
+    font-size: 14px;
+    color: #3399ff;
+    padding: 1px;
+    width: 3%;
 }

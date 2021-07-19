@@ -2,7 +2,7 @@
 
 {% block body %}
     {% if not user.is_authenticated %}
-    <div id="not-authenticated">
+    <div class="not-authenticated">
         <p>
             Oops, you are not signed in!
         </p>
@@ -13,7 +13,7 @@
         </p>
     </div>
     {% else %}
-    <div id="authenticated">
+    <div class="authenticated">
         <div id="new-post">
             <form id="new-post-form" class="form-group" action="{% url 'post' %}" method="post">
                 {% csrf_token %}
@@ -24,14 +24,17 @@
                     <input id="submit-post" class="btn btn-primary" type="submit" value="Post">
                 </div>
             </form>
+            <hr>
         </div>
         <div id="list-posts">
             {% for post in posts %}
             <div>
-                <a href="{% url 'profiles' post.poster %}">{{ post.poster }}</a>
-                {{ post.timestamp }}
-                <p>{{ post.likes }}</p>
-                <p>{{ post.body }}</p>
+                <p><a href="{% url 'profiles' post.poster %}"><strong>{{ post.poster }}</strong></a> posted on {{post.timestamp}}</p>
+                <p id="body-display">{{ post.body }}</p>
+                <p id="likes-display">{{ post.likes }} likes
+                    <button class="btn btn-dark">Like</button>
+                </p>
+                <hr>
             </div>
             {% endfor %}
         </div>

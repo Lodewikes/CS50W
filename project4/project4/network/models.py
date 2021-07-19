@@ -12,6 +12,15 @@ class Post(models.Model):
     likes = models.IntegerField()
     body = models.TextField()
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "poster": self.poster,
+            "timestamp": self.timestamp,
+            "likes": self.likes,
+            "body": self.body
+        }
+
     def __str__(self):
         return f"Post by {self.poster}"
 

@@ -1,5 +1,6 @@
 import datetime
 from datetime import timezone
+import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -7,14 +8,22 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html", {
-        "posts": Post.objects.all()
-    })
+    return render(request, "network/index.html")
+
+
+# return json response for all posts
+@login_required(login_url="/login")
+def get_all_posts(request):
+    posts = Post.objects.all()
+    posts = posts.order_by("-timestamp").all()
+    json_obj = [post.serialize() for post in posts]
+    return JsonResponse(json_obj, safe=False)
 
 
 def login_view(request):
@@ -114,6 +123,16 @@ def profile_view(request, profile_name):
         })
     else:
         return render(request, "network/index.html")
+
+
+@login_required(login_url="/login")
+def get_profile(request, profile_name):
+    profile = User.objects.get(username=profile_name)
+    response = {
+        "username": profile.username,
+        "email": profile.email
+    }
+    return JsonResponse(response)
 
 
 def edit_post_view():

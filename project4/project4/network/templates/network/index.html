@@ -26,7 +26,14 @@
             </form>
         </div>
         <div id="list-posts">
-            TODO
+            {% for post in posts %}
+            <div>
+                <a href="{% url 'profiles' post.poster %}">{{ post.poster }}</a>
+                {{ post.timestamp }}
+                <p>{{ post.likes }}</p>
+                <p>{{ post.body }}</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
     {% endif %}

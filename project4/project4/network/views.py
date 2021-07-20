@@ -9,6 +9,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .models import User, Post
 
@@ -25,6 +27,29 @@ def get_all_posts(request):
     json_obj = [post.serialize() for post in posts]
     return JsonResponse(json_obj, safe=False)
 
+
+@csrf_exempt
+@login_required(login_url="/login")
+def get_post_by_id(request, post_id):
+    try:
+        post = Post.objects.get(id=int(post_id))
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+
+    if request.method == "GET":
+        return JsonResponse(post.serialize())
+    
+    elif request.method  == "PUT":
+        data = json.loads(request.body)
+        if data.get("likes") is not None:
+            post.likes = data["likes"]
+        post.save()
+        return HttpResponse(status=204)
+
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required"
+        }, status=400)
 
 def login_view(request):
     if request.method == "POST":

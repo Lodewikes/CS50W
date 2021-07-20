@@ -33,13 +33,19 @@ function displayPosts(post, item) {
 
     // body
     body.innerHTML = post.body;
+    body.style.whiteSpace = "pre-wrap";
 
     // likes
     likes.innerHTML = post.likes;
+    likes.setAttribute("id", "post-likes-" + post.id)
 
     // like button
-    likeBtn.textContent = "Like";
+    if (likeBtn.textContent !== "Unlike") {
+        likeBtn.textContent = "Like";
+    }
     likeBtn.setAttribute("class", "btn btn-dark");
+    likeBtn.setAttribute("id", "likeBtn-" + post.id)
+    likeBtn.addEventListener("click", () => likePost(post, likes))
 
     item.appendChild(poster);
     item.appendChild(timestamp);
@@ -52,4 +58,25 @@ function displayPosts(post, item) {
 function displayProfile(post) {
     document.querySelector("#list-posts").innerHTML = "";
     document.querySelector("#list-posts").innerHTML = post.poster;
+}
+
+function likePost(post, likesElement) {
+    var likes_nr;
+    var btn = document.querySelector("#likeBtn-" + post.id);
+    if (btn.textContent === "Like") {
+        likes_nr = post.likes += 1;
+        btn.textContent = "Unlike";
+    }
+    else if (btn.textContent === "Unlike") {
+        likes_nr = post.likes -= 1;
+        btn.textContent = "Like";
+    }
+    fetch(`/posts/${post.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+            likes: likes_nr,
+        })
+    })
+    .catch(error => console.log(error));
+    document.querySelector("#post-likes-" + post.id).innerHTML = likes_nr;
 }

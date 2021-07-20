@@ -61,6 +61,8 @@ function displayProfile(post) {
 }
 
 function likePost(post, likesElement) {
+    // TODO refresh resets btn to like
+    // TODO make sure like/unlike is for logged in user only and not affect other users
     var likes_nr;
     var btn = document.querySelector("#likeBtn-" + post.id);
     if (btn.textContent === "Like") {

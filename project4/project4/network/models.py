@@ -31,3 +31,19 @@ class Post(models.Model):
 # TODO determine necessity at later stage
 # class Follower(models.Model):
 #     pass
+
+class Like(models.Model):
+    user_pk = models.IntegerField()
+    post_pk = models.IntegerField()
+    unliked = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"User {self.user_pk} liked post {self.post_pk}"
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_pk": self.user_pk,
+            "post_pk": self.post_pk,
+            "unliked": self.unliked
+        }

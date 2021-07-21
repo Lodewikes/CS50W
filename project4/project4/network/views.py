@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-from .models import User, Post
+from .models import *
 
 
 def index(request):
@@ -50,6 +50,47 @@ def get_post_by_id(request, post_id):
         return JsonResponse({
             "error": "GET or PUT request required"
         }, status=400)
+
+
+@csrf_exempt
+@login_required(login_url="/login")
+def get_like_by_post_and_user_id(request, post_id, user_id):
+    if request.method == "GET":
+        try:
+            like = Like.objects.get(post_pk=post_id, user_pk=user_id)
+            return JsonResponse(like.serialize())
+        except Like.DoesNotExist:
+            return JsonResponse({"error": "Like not found"})
+
+    elif request.method == "POST":
+        like = Like.objects.create(user_pk=user_id, post_pk=post_id, unliked=False)
+        if like.user_pk is not None and like.post_pk is not None:
+            like.save()
+        return HttpResponseRedirect(reverse("index"))
+
+    elif request.method == "PUT":
+        like = Like.objects.get(user_pk=user_id, post_pk=post_id)
+        data = json.loads(request.body)
+        if data.get("unliked") is not None:
+            like.unliked = data["unliked"]
+            like.save()
+        return HttpResponse(status=204)
+
+    else:
+        return JsonResponse({
+            "error": "GET, POST or PUT request required"
+        }, status=400)
+
+
+@login_required(login_url="/login")
+def get_all_likes_by_post_id(request, post_id):
+    try:
+        likes = Like.objects.filter(post_pk=post_id)
+        return JsonResponse([likes.serialize() for like in likes], safe=False)
+    except Like.DoesNotExist:
+        return JsonResponse({"error": "Likes not found"})
+
+
 
 def login_view(request):
     if request.method == "POST":

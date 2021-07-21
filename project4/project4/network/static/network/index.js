@@ -60,25 +60,38 @@ function displayProfile(post) {
     document.querySelector("#list-posts").innerHTML = post.poster;
 }
 
-function likePost(post, likesElement) {
-    // TODO refresh resets btn to like
-    // TODO make sure like/unlike is for logged in user only and not affect other users
-    var likes_nr;
-    var btn = document.querySelector("#likeBtn-" + post.id);
-    if (btn.textContent === "Like") {
-        likes_nr = post.likes += 1;
-        btn.textContent = "Unlike";
-    }
-    else if (btn.textContent === "Unlike") {
-        likes_nr = post.likes -= 1;
-        btn.textContent = "Like";
-    }
-    fetch(`/posts/${post.id}`, {
-        method: "PUT",
+async function likePost(post, likesElement) {
+    const user_id = JSON.parse(document.getElementById("user_id").textContent);
+
+    // does like exist?
+    // if so, unlike (PUT)
+    // if not like the post (POST)
+    // add or subract from total likes
+
+    await fetch(`posts/likes/${post.id}/${user_id}`)
+    .then(response => response.json())
+    .then(like => {
+        if (like.user_pk === undefined && like.post_pk === undefined && like.unliked === undefined) {
+            likeFetch(post.id, user_id, "POST", false);
+        }
+        else if(like.user_pk !== undefined && like.post_pk !== undefined && like.unliked === false) {
+            likeFetch(post.id, user_id, "PUT", true);
+        }
+        else if(like.user_pk !== undefined && like.post_pk !== undefined && like.unliked === true) {
+            likeFetch(post.id, user_id, "PUT", false);
+        } 
+    })  
+}
+
+async function likeFetch(post_id, user_id, method, likeBool) {
+    await fetch(`posts/likes/${post_id}/${user_id}`, {
+        method: method,
         body: JSON.stringify({
-            likes: likes_nr,
-        })
+            user_pk: user_id,
+            post_pk: post_id,
+            unliked: likeBool
+        }),
     })
+    .then(response => response.json())
     .catch(error => console.log(error));
-    document.querySelector("#post-likes-" + post.id).innerHTML = likes_nr;
 }

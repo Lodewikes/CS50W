@@ -43,6 +43,8 @@ def get_post_by_id(request, post_id):
         data = json.loads(request.body)
         if data.get("likes") is not None:
             post.likes = data["likes"]
+        if data.get("body") is not None:
+            post.body = data["body"]
         post.save()
         return HttpResponse(status=204)
 
@@ -86,7 +88,7 @@ def get_like_by_post_and_user_id(request, post_id, user_id):
 def get_all_likes_by_post_id(request, post_id):
     try:
         likes = Like.objects.filter(post_pk=post_id)
-        return JsonResponse([likes.serialize() for like in likes], safe=False)
+        return JsonResponse([like.serialize() for like in likes], safe=False)
     except Like.DoesNotExist:
         return JsonResponse({"error": "Likes not found"})
 

@@ -138,6 +138,7 @@ async function likeFetch(post_id, user_id, method, likeBool) {
     .catch(error => console.log(error)); // FIXME SyntaxError: JSON.parse: unexpected end of data at line 1 column 1 of the JSON data index.js:132:29
 }
 
+// FIXME I need to update likes count without requiring a reload
 async function setLikes(post) {
     var count = 0;
     await fetch(`posts/likes/${post.id}`)
@@ -197,7 +198,6 @@ function editPost(post) {
 
 async function saveEditedPost(post) {
     var textcontent = document.getElementById("edit-post-textarea-" + post.id).value;
-    alert(textcontent)
     await fetch(`posts/${post.id}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -209,4 +209,30 @@ async function saveEditedPost(post) {
     })
     .then(response => response.json()) 
     .catch(error => console.log(error));
+
+    // get the elements to change
+    const item = document.getElementById("post-" + post.id);
+    const bodyDiv = document.getElementById("body-div-" + post.id);
+    const body = document.createElement("p");
+    const editBtn = document.createElement("button");
+    const saveBtn = document.getElementById("save-edit-btn-" + post.id);
+    const textarea = document.getElementById("edit-post-textarea-" + post.id);
+
+    bodyDiv.removeChild(textarea);
+
+    // body <p> settings and values
+    body.innerHTML = textcontent;
+    body.setAttribute("id", "post-body-" + post.id);
+    body.style.whiteSpace = "pre-wrap";
+    bodyDiv.appendChild(body)
+
+    // put event handler back on edit btn
+    editBtn.setAttribute("class", "btn btn-dark");
+    editBtn.setAttribute("id", "editPostBtn-" + post.id);
+    editBtn.textContent = "Edit"; 
+    editBtn.addEventListener("click", () => editPost(post));
+
+    // buttons changes
+    item.removeChild(saveBtn);
+    item.appendChild(editBtn)
 }

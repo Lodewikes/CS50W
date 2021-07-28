@@ -24,20 +24,10 @@
                     <input id="submit-post" class="btn btn-primary" type="submit" value="Post">
                 </div>
             </form>
-            <hr>
         </div>
         <div id="list-posts">
-            {% for post in posts %}
-            <div>
-                <p><a href="{% url 'profiles' post.poster %}"><strong>{{ post.poster }}</strong></a> posted on {{post.timestamp}}</p>
-                <p id="body-display">{{ post.body }}</p>
-                <p id="likes-display">{{ post.likes }} likes
-                    <button class="btn btn-dark">Like</button>
-                </p>
-                <hr>
-            </div>
-            {% endfor %}
         </div>
     </div>
+    <hr>
     {% endif %}
 {% endblock %}

@@ -6,7 +6,7 @@ conda==4.3.16
 cycler==0.10.0
 Cython==0.29.22
 distlib==0.3.1
-Django==3.2.4
+Django==3.2.14
 filelock==3.0.12
 idna==2.10
 kiwisolver==1.3.1
